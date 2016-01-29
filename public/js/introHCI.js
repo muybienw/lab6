@@ -12,6 +12,75 @@ function initializePage() {
 	$('.project a').click(addProjectDetails);
 
 	$('#colorBtn').click(randomizeColors);
+	$('#spotifyBtn').click(showMyMusic);
+	$('#fotoBtn').click(showFotos);
+}
+
+function showFotos(e){
+	e.preventDefault();
+
+	var query = 'http://www.panoramio.com/map/get_panoramas.php?' +
+			'set=public&from=0&to=10&minx=-30&miny=-30&maxx=30&maxy=30&size=medium&mapfilter=true';
+
+	$.get(query, showfotos, 'jsonp');
+}
+
+function showfotos(res){
+	console.log(res);
+
+	var fotos = $('.fotos');
+	var html = "";
+
+	console.log(res["count"]);
+
+	for(var i=0; i<res["photos"].length; i++){
+		html += '<div class="thumbnail foto">' +
+				'<img src="' + res["photos"][i]["photo_file_url"] + '">' +
+				'<a href="' + res["photos"][i]["owner_url"] + '">' + res["photos"][i]["owner_name"]  + '</a>' +
+				'<p>' + res["photos"][i]["upload_date"] + '</p>' +
+				'</div>';
+	}
+
+	fotos.html(html);
+}
+
+function showMyMusic(e){
+	e.preventDefault();
+
+	var btn = $(this);
+
+	var authorization = 'https://accounts.spotify.com/authorize?' +
+					'client_id=c58d47985d76445283527c14ae217c2e&' +
+					'redirect_uri=/' +
+					'response_type=code';
+
+	$.get(authorization, authorize, 'jsonp');
+	$.get('https://api.spotify.com/v1/artists/0OdUWJ0sBjDrqHygGUXeCF', showMusic);
+}
+
+function authorize(res){
+	console.log(res);
+}
+
+function showMusic(res){
+	//console.log(res);
+
+	var music = $('.mymusic');
+
+	console.log(music);
+
+	var name = res["name"];
+	var imgurl = res["images"][2]["url"];
+
+	console.log(name);
+	console.log(imgurl);
+
+	var html = 		'<div class="thumbnail">' +
+					'<img src="' + imgurl + '">' +
+					'<p>' + name + '</p>' +
+					'</div>';
+
+	music.html(html);
 }
 
 /*
